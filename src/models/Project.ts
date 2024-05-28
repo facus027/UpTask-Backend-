@@ -1,29 +1,40 @@
-import { Schema, Document } from "mongoose";
+import { Schema, Document, PopulatedDoc, Types } from "mongoose";
 import mongoose from "mongoose";
+import { ITask } from "./Task";
 
-export type ProyectType = Document & {
+export interface IProyect extends Document {
   projectName: string;
   clientName: string;
   description: string;
-};
+  tasks: PopulatedDoc<ITask & Document>[];
+}
 
-const ProjectSchema: Schema = new Schema({
-  projectName: {
-    type: String,
-    required: true,
-    trim: true,
+const ProjectSchema: Schema = new Schema(
+  {
+    projectName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    clientName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    tasks: [
+      {
+        type: Types.ObjectId,
+        ref: "Task",
+      },
+    ],
   },
-  clientName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-});
+  { timestamps: true }
+);
 
-const Project = mongoose.model<ProyectType>("Project", ProjectSchema);
+const Project = mongoose.model<IProyect>("Project", ProjectSchema);
 export default Project;
